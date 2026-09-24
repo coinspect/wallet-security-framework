@@ -14,7 +14,7 @@ Evaluates how the wallet manages dApp permissions and restricts sensitive RPCs. 
 | [WSB-PERM-002~Mobile](#wsb-perm-002mobile) | Wallet unlock before requests | Requires users to unlock it before processing dApp requests when in a locked state. |
 | [WSB-PERM-002~Browser](#wsb-perm-002browser) | Wallet unlock before requests | Requires users to unlock it before processing dApp requests when in a locked state. |
 | [WSB-PERM-003](#wsb-perm-003) | Mismatching EIP-712 chainId detection | Alerts users or rejects signing EIP-712 messages with a mismatched chain ID. |
-| [WSB-PERM-004](#wsb-perm-004) | Connected dApp management | Allows users to revoke dApp access and lists all connected dApps when multiple connections are supported. |
+| [WSB-PERM-004](#wsb-perm-004) | Connected dApp management | Allows users to list and revoke connected dApps. |
 | [WSB-PERM-005](#wsb-perm-005) | Token approval management | Allows users to view and revoke token approvals. |
 | [WSB-PERM-006](#wsb-perm-006) | eth_sign method disabled | Restricts the use of the deprecated and insecure `eth_sign` method by default. |
 | [WSB-PERM-007~Mobile](#wsb-perm-007mobile) | Confirmation for requests from WalletConnect | Requires user confirmation for requests from WalletConnect before granting dApp access to specific RPC methods. |
@@ -85,7 +85,7 @@ Alerts users or rejects signing EIP-712 messages with a mismatched chain ID.
 
 **Connected dApp management**
 
-Allows users to revoke dApp access and lists all connected dApps when multiple connections are supported.
+Allows users to list and revoke connected dApps.
 
 **Attack scenario:** A previously trusted dApp becomes malicious or is compromised, and due to another vulnerability or excessive permissions, it can abuse its existing connection to perform unintended actions or access sensitive data.
 
