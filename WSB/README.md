@@ -89,7 +89,7 @@ Allows users to revoke dApp access and lists all connected dApps when multiple c
 
 **Attack scenario:** A previously trusted dApp becomes malicious or is compromised, and due to another vulnerability or excessive permissions, it can abuse its existing connection to perform unintended actions or access sensitive data.
 
-**Testing instructions:** If the wallet supports multiple dApp connections at once, connect to at least two dApps and look for a section within the wallet UI that lists all connected dApps. If it only supports one connection at a time, connect to the testing dApp and find the disconnect option; a connected dApps list is not required. In either case, disconnect the testing dApp, then send RPC requests from it to verify access has been fully revoked.
+**Testing instructions:** If the wallet supports multiple dApp connections at once, connect to at least two dApps and look for a section within the wallet UI that lists all connected dApps. If it only supports one connection at a time, connect to the testing dApp and find the disconnect option. In either case, disconnect the testing dApp, then send RPC requests from it to verify access has been fully revoked.
 
 **Reasoning:** Persistent dApp connections represent an ongoing trust relationship, so users need visibility into which apps still have access. The ability to review and revoke those connections reduces the risk of stale approvals, forgotten sessions, or continued access after the user no longer trusts the dApp.
 
