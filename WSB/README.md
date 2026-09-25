@@ -275,7 +275,7 @@ Clearly displays all the key details for ERC-20 Approve requests.
 
 **Attack scenario:** A malicious dApp tricks the user into approving excessive or unlimited token allowances to an attacker-controlled contract.
 
-**Testing instructions:** Trigger an ERC-20 approve in two ways: 1) deploy a custom ERC-20 and call approve directly, and 2) access any swap dApp and trigger an approve through the UI. Observe what information the wallet displays about the token, spender, and amount.
+**Testing instructions:** Trigger ERC-20 approvals using both the custom ERC-20 flow and the liquidity flow provided within the testing dApp. For each flow, observe what information the wallet displays about the token, spender, and amount.
 
 **Reasoning:** ERC-20 approvals can grant a spender long-lived control over tokens. Clearly showing the token, spender, and amount helps users detect malicious approvals, unlimited allowances, and approvals targeting unexpected contracts.
 
