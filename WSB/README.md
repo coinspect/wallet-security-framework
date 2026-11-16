@@ -33,7 +33,7 @@ Warns users when the domain in a Sign-In with Ethereum (EIP-4361) message does n
 
 **Attack scenario:** A phishing site tricks the user into signing a login message that authenticates them to a different service targeted by the attacker.
 
-**Testing instructions:** Generate and attempt to sign a SIWE message from a dApp whose origin differs from the domain specified in the SIWE object. Observe whether the wallet warns the user or blocks the signing.
+**Testing instructions:** Generate and attempt to sign a SIWE message from a dApp whose origin differs from the domain specified in the SIWE object. Observe whether the wallet warns the user or blocks the signing. Ensure the message is otherwise valid and document both domains. An unrelated error, such as 'Invalid nonce', does not demonstrate mismatch detection; correct it and repeat. If the blocking reason is unclear, compare otherwise valid messages with matching and mismatching domains.
 
 **Reasoning:** A mismatch between the dApp origin and the domain inside the SIWE message can indicate phishing or session hijacking attempt. Warning on this helps users avoid signing login messages that could authenticate them to a different service than the one they think they are using.
 
@@ -89,7 +89,7 @@ Allows users to list and revoke connected dApps.
 
 **Attack scenario:** A previously trusted dApp becomes malicious or is compromised, and due to another vulnerability or excessive permissions, it can abuse its existing connection to perform unintended actions or access sensitive data.
 
-**Testing instructions:** If the wallet supports multiple dApp connections at once, connect to at least two dApps and look for a section within the wallet UI that lists all connected dApps. If it only supports one connection at a time, connect to the testing dApp and find the disconnect option. In either case, disconnect the testing dApp, then send RPC requests from it to verify access has been fully revoked.
+**Testing instructions:** If the wallet supports multiple dApp connections at once, connect to at least two dApps and look for a section within the wallet UI that lists all connected dApps. If it only supports one connection at a time, connect to the testing dApp and find the disconnect option. In either case, disconnect the testing dApp, then send RPC requests from it to verify access has been fully revoked. For a single-connection wallet, document that limitation and show the active connection; a list of multiple dApps is not required. Capture the response to subsequent RPC requests; a session-deleted message alone does not prove revocation prevents them.
 
 **Reasoning:** Persistent dApp connections represent an ongoing trust relationship, so users need visibility into which apps still have access. The ability to review and revoke those connections reduces the risk of stale approvals, forgotten sessions, or continued access after the user no longer trusts the dApp.
 
@@ -159,7 +159,7 @@ Requires user confirmation before switching the active chain.
 
 **Attack scenario:** A malicious dApp switches the user to an unexpected network where assets or interactions behave differently, leading to unintended actions.
 
-**Testing instructions:** Send a `wallet_switchEthereumChain` RPC request from a dApp and observe whether a confirmation prompt appears. If no prompt is shown, check whether the wallet allows users to manage pre-approved networks within the connection dialog — if so, configure only one approved network and attempt to switch to any other chain. Perform this test through both the browser interface and the WalletConnect interface, if applicable.
+**Testing instructions:** Send a `wallet_switchEthereumChain` RPC request from a dApp and observe whether a confirmation prompt appears. If no prompt is shown, check whether the wallet allows users to manage pre-approved networks within the connection dialog — if so, configure only one approved network and attempt to switch to any other chain. Perform this test through both the browser interface and the WalletConnect interface, if applicable. Identify each flow as embedded browser, extension, or WalletConnect. For an unconfirmed switch, capture `eth_chainId` before and after and the network shown in a subsequent transaction request, without signing it; RPC success alone is insufficient. Transaction confirmation does not authorize the earlier switch. Document approved networks when relevant, or the absence of network approval controls. WalletConnect transport or invalid-method errors alone do not prove a security block and are inconclusive.
 
 **Reasoning:** Chain switching changes the execution context of future transactions and signatures, so it should never happen silently. Confirmation protects users from being moved onto an unexpected network where balances, assets, or contract interactions may behave very differently.
 
@@ -275,7 +275,7 @@ Clearly displays all the key details for ERC-20 Approve requests.
 
 **Attack scenario:** A malicious dApp tricks the user into approving excessive or unlimited token allowances to an attacker-controlled contract.
 
-**Testing instructions:** Trigger an ERC-20 approve for both a well-known token and a custom ERC-20 you deploy. In each case, call approve directly and observe what information the wallet displays about the token, spender, and amount.
+**Testing instructions:** Trigger an ERC-20 approve for both a well-known token and a custom ERC-20 you deploy. In each case, call approve directly and observe what information the wallet displays about the token, spender, and amount. Use legitimate USDC.e and a duplicate at a different contract address; document that both return identical on-chain name and symbol. Both dialogs must identify an approval and show spender and amount. Accept token identification through a contract address accessible in the wallet before confirmation, a symbol with an explicit verification indicator, or wallet-displayed names or symbols distinguishing the tokens despite matching metadata (e.g. USDC.e versus USDC). This last distinction does not prove explicit verification. The duplicate must not inherit verification from matching metadata. Distinguish token and spender addresses: dApp-only contract displays do not establish wallet access to the token contract, and generic unlimited-approval warnings do not establish verification.
 
 **Reasoning:** ERC-20 approvals can grant a spender long-lived control over tokens. Clearly showing the token, spender, and amount helps users detect malicious approvals, unlimited allowances, and approvals targeting unexpected contracts.
 
@@ -318,7 +318,7 @@ Evaluates proactive measures against deceptive dApps and external threats. Inclu
 | ID | Name | Description |
 |---|---|---|
 | [WSB-THRE-001](#wsb-thre-001) | Trusted dApp detection | Informs users when interacting with a trusted dApp URL. |
-| [WSB-THRE-002](#wsb-thre-002) | Malicious address detection | Prevents or alerts users about interactions with a known malicious address. |
+| [WSB-THRE-002](#wsb-thre-002) | Malicious and poisoned address detection | Prevents or alerts users about interactions with a known malicious address or a lookalike (poisoned) address. |
 | [WSB-THRE-003](#wsb-thre-003) | Phishing dApp detection | Prevents or alerts users about interactions with a known malicious URL. |
 | [WSB-THRE-004](#wsb-thre-004) | dApp access disclosure dialog | Discloses the dApp's read access to the user's account and its ability to request signatures on connection. |
 | [WSB-THRE-005](#wsb-thre-005) | Unknown address detection | Warns users when interacting with an unknown address. |
@@ -335,7 +335,7 @@ Informs users when interacting with a trusted dApp URL.
 
 **Attack scenario:** A phishing site impersonates a trusted dApp to gain user trust and request sensitive actions.
 
-**Testing instructions:** Attempt to connect to a well-known dApp (e.g. Uniswap) and observe the connection request screen. Then repeat with an unknown dApp and compare how each is displayed.
+**Testing instructions:** Attempt to connect to a well-known dApp (e.g. Uniswap) and observe the connection request screen. Then repeat with an unknown dApp and compare how each is displayed. The distinction must come from a wallet-provided trust or security indicator, not merely different logos or icons. For example, 'No fraud detected' for the known dApp and its absence for the unknown dApp is sufficient. Document which screen corresponds to each dApp.
 
 **Reasoning:** Verified dApp indicators help users distinguish trusted, well-known services from lookalike phishing sites. This is especially valuable during connection prompts, where users are often making a quick trust decision with limited information.
 
@@ -349,7 +349,7 @@ Prevents or alerts users about interactions with a known malicious address or a 
 
 **Attack scenario:** A user unknowingly sends funds to an address associated with scams, theft, or malicious activity. In the poisoning variant, a user sends funds to a lookalike address that mimics a trusted recipient's leading and trailing characters but was planted by an attacker via a dust or zero-value transfer.
 
-**Testing instructions:** Test both via dApp and direct wallet UI, observing whether the wallet surfaces any warning on each attempt. 1) Attempt to send a transaction to a known malicious address (e.g. the Tornado Cash attacker address). 2) Attempt to send a transaction to a lookalike address that shares its first and last 4 characters with a recipient you have previously sent to, but differs in the middle.
+**Testing instructions:** Test both via dApp and direct wallet UI, observing whether the wallet surfaces any warning on each attempt. 1) Attempt to send a transaction to a known malicious address (e.g. the Tornado Cash attacker address). 2) Attempt to send a transaction to a lookalike address that shares its first and last 4 characters with a recipient you have previously sent to, but differs in the middle. Test each address type in both flows and link each result to the tested address and its specific risk. Generic transaction warnings do not count; missing evidence is inconclusive.
 
 **Reasoning:** Many scams rely on users sending funds to addresses linked to theft, laundering, or fraud, so alerting on them gives a last defensive checkpoint before irreversible transfers. Poisoning is a related vector: a lookalike address planted in the user's history appears familiar, and since users often check only the leading and trailing characters, the wallet must treat it as malicious.
 
@@ -363,7 +363,7 @@ Prevents or alerts users about interactions with a known malicious URL.
 
 **Attack scenario:** A user interacts with a known malicious website that attempts to steal funds or signatures.
 
-**Testing instructions:** Visit or attempt to connect to sites included in the [MetaMask phishing list](https://github.com/MetaMask/eth-phishing-detect/blob/b68a72cc477273db3717204d5db699c11980b2f5/src/config.json) and observe whether the wallet warns the user. Note that Chrome also includes built-in phishing protection, which may trigger warnings for some of these sites, though not all.
+**Testing instructions:** Visit or attempt to connect to sites included in the [MetaMask phishing list](https://github.com/MetaMask/eth-phishing-detect/blob/b68a72cc477273db3717204d5db699c11980b2f5/src/config.json) and observe whether the wallet warns the user. Note that Chrome also includes built-in phishing protection, which may trigger warnings for some of these sites, though not all. Document each site and link it to the wallet's response; the domain need not appear in the warning itself. A dApp-side 'Declined' or 'Reject Session' status alone is insufficient: distinguish a site-related security block from manual rejection. An unexplained rejection without a site-related security warning is inconclusive.
 
 **Reasoning:** Phishing websites are one of the most common ways users lose funds or sign malicious payloads. Detecting and warning on known phishing domains blocks attacks early, before the user even reaches the approval stage.
 
@@ -466,7 +466,7 @@ Uses strong authentication, including biometrics, rate limiting, and resistance 
 
 **Attack scenario:** An attacker with access to the device bypasses weak authentication mechanisms (e.g., weak passwords, lack of rate limiting) to gain control of the wallet.
 
-**Testing instructions:** Check whether biometric authentication is available and attempt to set a weak PIN (e.g. `1234`). Then attempt multiple incorrect logins and observe whether rate limiting activates.
+**Testing instructions:** Check whether biometric authentication is available and attempt to set a weak PIN (e.g. `1234`). Then attempt multiple incorrect logins and observe whether rate limiting activates. If biometrics are mandatory with no PIN or password alternative, document the absence of alternatives; the weak-PIN and PIN/password rate-limiting tests do not apply.
 
 **Reasoning:** Weak local authentication can completely undermine all other security controls. Strong passwords, biometrics, and rate-limiting make brute force, shoulder surfing, and opportunistic device access much harder.
 
